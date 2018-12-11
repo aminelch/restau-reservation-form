@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="utf-8">
+	<meta content="IE=edge" http-equiv="X-UA-Compatible">
+	<meta content="width=device-width, initial-scale=1" name="viewport">
+	<meta content="Amine L'ch" name="author">
+	<title>Réserver votre table : restaurant Karismatik ;) </title>
+	<link href="https://fonts.googleapis.com/css?family=PT+Sans:400" rel="stylesheet">
+	<link href="web/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+	<link href="web/css/animate.css" rel="stylesheet" type="text/css" />
+	<link href="web/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+	<link href="web/css/style.css" rel="stylesheet" type="text/css" />
+
+</head>
+
+
+<body class="animated fadeIn delay-1s">
+<!--Alert de selection d'un plat -->
+<div aria-hidden="true" aria-labelledby="plat-warning" class="modal fade" id="plat-warning" role="document" tabindex="-1">
+	<div class="modal-dialog" role="dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title">Alert</h3>
+				<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+						<h3><i class="fa fa-exclamation-triangle fa-2x" aria-hidden="true"></i> veuillez selection au moins un plat !!</h3>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-danger" data-dismiss="modal">OK</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!--Affiche le resulta ici -->
+<div aria-hidden="true" aria-labelledby="resultat" class="modal fade" id="resultat" role="document" tabindex="-1">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title">Resumé de formulaire</h3>
+				<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>
+					Bonjour <span id="resume-civilites"></span> <span class="text-uppercase" id="resume-nom"></span><br>
+					Votre commande pour le <u><span id="resume-date"></span></u> à été bien validée.</p>
+				<p>Ci-dessous ce que vous avez commandé</p>
+				<table class="table table-striped">
+					<thead>
+					<tr>
+						<th scope="col">Plat commandé</th>
+						<th scope="col">Prix de plat</th>
+						<th scope="col">Nombre des plats</th>
+
+					</tr>
+					</thead>
+					<tbody id="table-data">
+					<tr>
+					</tr>
+					</tbody>
+				</table>
+				<p>
+					<h4><i class="fa fa-money" aria-hidden="true"></i> Montant total <b class="text-danger" id="resume-total"></b></h4>
+				</p>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-info" data-dismiss="modal" type="button">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Boite modal licence -->
+<div aria-hidden="true" aria-labelledby="licence" class="modal fade" id="licence" role="document" tabindex="-1">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title"><i aria-hidden="true" class="fa fa-copyright"></i> Licence</h3>
+				<button aria-label="Close" class="close" data-dismiss="modal" type="button">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p class="text-center" style="font-family: 'Source Code Pro Light', sans-serif;font-size: 14px;">
+					Copyright Louhichi Amine &copy; 2018 < github.com@aminelch ></p>
+				Lors de developpement de ce petit mini projet j'ai utilisé pas mal des ressources qui se classent
+				comme etant OpenSource , la liste ci-dessous décrite chaque ressource avec un lien vers son site.<br>
+				<ol>
+					<li><a href="https://jquery.org/" target="_blank">Twitter Bootstrap v3.3.1</a> </li>
+					<li><a href="https://getbootstrap.com/" target="_blank">Twitter Bootstrap v3.3.7</a> </li>
+					<li><a href="https://daneden.github.io/animate.css/" target="_blank">AnimateCSS</a> </li>
+					<li><a href="https://fontawesome.com/v4.7.0/" target="_blank">FontAwesome</a> </li>
+					<li><a href="https://bootstrap-datepicker.readthedocs.io/en/latest/" target="_blank">Bootstrap
+						DatePicker </a></li>
+					<li><a href="https://ihatetomatoes.net/demos/css3-preloader-transition/" target="_blank">Css3
+						Preloader Transition </a> </li>
+					<li>Image de chaise de la part de <a href="https://www.iconfinder.com/search/?q=chair&price=free" target="_blank">iconfinder.com</a></li>
+					<li>Image de background de la part de <a href="https://imgur.com/" target="_blank">imagur.com</a> </li>
+
+				</ol>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-success" data-dismiss="modal" type="button">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+<div id="myBtn" style="display: none;">
+	<a id="listeclients" style="text-decoration: none;" title="Liste des clients"><i class="fa fa-bookmark fa-2x"></i>
+	</a> &nbsp;
+</div>
+<!--PAGE LOADER -->
+<div id="loader-wrapper">
+	<div id="loader"></div>
+
+	<div class="loader-section section-left"></div>
+	<div class="loader-section section-right"></div>
+
+</div>
+<!--END PAGE LOADER-->
+<div class="section" id="booking">
+	<div class="section-center">
+		<div class="container">
+
+			<div class="row">
+
+				<div class="booking-form">
+					<form data-toggle="validator" id="formulaire" method="POST">
+						<div class="form-group">
+							<h2 class="text-center">RESERVER VOTRE TABLE !</h2>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<span class="form-label">Table pour combien de personnes ?</span>
+									<select class="form-control " id="personne" name="personne">
+										<option value="-1">--Veuillez choisir---</option>
+										<option value="1">Une place</option>
+										<option value="2">2 places</option>
+										<option value="4">4 places</option>
+										<option value="6">6 places</option>
+									</select>
+									<p class="champ-requis" id="erreur-personne"></p>
+
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<span class="form-label">A quelle date vous allez venir ?</span>
+									<div class="input-group date">
+										<input class="form-control" id="ddate" placeholder="01/12/2018" type="date">
+										<p class="champ-requis" id="erreur-date"></p>
+										<div class="input-group-addon">
+											<i class="fa fa-calendar"></i>
+										</div>
+									</div>
+
+								</div>
+							</div>
+
+
+						</div>
+						<!-- LES PLATS-->
+						<div class="row" id="plats">
+							<br>
+							<span class="form-label">Que voulez vous manger !</span>
+							<div class="col-md-2"><br>
+								<div class="form-group">
+									<span class="form-label">Salade</span>
+									<select class="form-control" id="salade">
+									</select>
+									<span class="select-arrow"></span>
+								</div>
+							</div>
+
+							<div class="col-md-2"><br>
+								<div class="form-group">
+									<span class="form-label">Soupe</span>
+									<select class="form-control" id="soupe">
+									</select>
+									<span class="select-arrow"></span>
+								</div>
+							</div>
+
+							<div class="col-md-2"><br>
+								<div class="form-group">
+									<span class="form-label">Ruz</span>
+									<select class="form-control" id="ruz">
+									</select>
+									<span class="select-arrow"></span>
+								</div>
+							</div>
+
+							<div class="col-md-2"><br>
+								<div class="form-group">
+									<span class="form-label">Couscous</span>
+									<select class="form-control" id="couscous">
+									</select>
+									<span class="select-arrow"></span>
+								</div>
+							</div>
+							<div class="col-md-2"><br>
+								<div class="form-group">
+									<span class="form-label">Fruits</span>
+									<select class="form-control" id="fruits">
+									</select>
+									<span class="select-arrow"></span>
+								</div>
+							</div>
+
+							<div class="col-md-2"><br>
+								<div class="form-group">
+									<span class="form-label">Gateaux</span>
+									<select class="form-control" id="gateaux">
+									</select>
+									<span class="select-arrow"></span>
+								</div>
+							</div>
+						</div>
+
+						<div class="row">
+							<h2>Vos coordonées</h2>
+							<div class="col-md-4">
+								<span class="form-label">Nom et prénom</span>
+								<input class="form-control" id="nomprenom" placeholder="Mohamed Amine" type="text">
+								<p class="champ-requis" id="erreur-nom"></p>
+							</div>
+							<div class="col-md-4">
+								<span class="form-label">N° de téléphone</span>
+								<input class="form-control" id="phone"  type="phone">
+								<p class="champ-requis" id="erreur-phone"></p>
+							</div>
+
+							<div class="col-md-4">
+								<span class="form-label">Civilités</span>
+								<div class="form-checkbox">
+
+									<label for="m">
+										<input id="m" name="civilite" type="radio" value="Monsieur">
+										<span></span>Monsieur
+									</label>
+
+									<label for="mme">
+										<input id="mme" name="civilite" type="radio" value="Madamme">
+										<span></span>Madamme
+									</label>
+									<label for="mlle">
+										<input id="mlle" name="civilite" type="radio" value="Mademoiselle">
+										<span></span>Mademoiselle
+									</label>
+								</div>
+								<p class="champ-requis" id="erreur-civilites"></p>
+							</div>
+
+
+						</div>
+
+						<div class="row" id="champaccompagne"><br>
+							<div class="col-md-12">
+								<span class="form-label">Liste des accompagnateurs (une personne par ligne):</span>
+								<textarea class="form-control" id="accom">
+									</textarea>
+								<p class="champ-requis" id="erreur-accom"></p>
+							</div>
+
+
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+							</div>
+
+							<div class="col-md-4">
+								<div class="form-btn">
+									<button class="submit-btn" id="submit" type="submit"> <i class="fa fa-arrow-right"></i>
+										Valider ma commande</button>
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<!--copyright o fazét lkol sans oublier hata had :) -->
+<footer class="copyright">
+	<a data-target="#licence" data-toggle="modal" href="#licence" role="dialog" style="color:white" tabindex="-1"
+	   title="Licence">
+		<span class="fa fa-question fa-3x"></span>
+	</a>
+</footer>
+</body>
+<script src="web/js/jquery.min.js"></script>
+<script src="web/js/bootstrap.js"></script>
+<script src="web/js/app.js"></script>
+</html>
